@@ -50,10 +50,10 @@ def startOrResume_track():
     startOrResume_track = sp.start_playback()
     return "The track is resumed"
 
-@app.route("/pause_track", methods=["GET"])
+@app.route("/pause_track")
 def pause_track():
     pause_track = sp.pause_playback()
-    return "The track is paused"
+    return render_template("pause_track.html")
 
 @app.route("/next_track", methods=["GET"])
 def next_track():
