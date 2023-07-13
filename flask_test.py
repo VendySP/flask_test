@@ -1,6 +1,6 @@
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
-from flask import Flask, request
+from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 
@@ -36,9 +36,14 @@ def current_track():
         
         return f"Currently playing: {track_name} - {artist_name} - {duration}"
 
-@app.route("/")
-def index():
-    return current_track()
+# @app.route("/")
+# def index():
+#     return current_track()
+
+@app.route("/get_current_track", methods=["GET"])
+def get_current_track():
+    track = current_track()  # Call your current_track() function
+    return jsonify({"track": track})
 
 @app.route("/resume_track", methods=["GET"])
 def startOrResume_track():
