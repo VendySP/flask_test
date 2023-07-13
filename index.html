@@ -7,7 +7,7 @@
         $(document).ready(function() {
             function getCurrentTrack() {
                 $.ajax({
-                    url: "/get_current_track",
+                    url: "http://localhost:5000/get_current_track",
                     type: "GET",
                     success: function(response) {
                         $("#current-track").text(response.track);
