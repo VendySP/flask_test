@@ -1,8 +1,6 @@
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
-from flask import Flask, request
-
-app = Flask(__name__)
+import json
 
 client_id = "578feaebb8124668a3a166ad01842756"
 client_secret = "359c2b4a7fef41cf825e712028f4d8e7"
@@ -14,59 +12,32 @@ sp = spotipy.Spotify(auth_manager=SpotifyOAuth(client_id=client_id,
                                                redirect_uri=redirect_uri,
                                                scope=scope))
 
-def time_format(track_duration):
-    seconds = track_duration // 1000
-    minutes = seconds // 60
-    remaining_seconds = seconds % 60
-    time_format = f"{minutes}:{remaining_seconds:02}"
-    return time_format
-
-def current_track(request):
+def current_track(event, context):
     # Get the currently playing track
     current_track = sp.current_user_playing_track()
 
     # Check if a track is currently playing
     if current_track is None:
-        return "No track is currently playing."
+        response = {
+            "statusCode": 200,
+            "body": json.dumps({"message": "No track is currently playing."})
+        }
     else:
         track_name = current_track['item']['name']
         artist_name = current_track['item']['artists'][0]['name']
         track_duration = current_track['item']['duration_ms']
         duration = time_format(track_duration)
         
-        return f"Currently playing: {track_name} - {artist_name} - {duration}"
-
-@app.route("/")
-def index():
-    return current_track(request)
-
-@app.route("/.netlify/functions/resume_track", methods=["GET"])
-def startOrResume_track():
-    startOrResume_track = sp.start_playback()
-    return "The track is resumed"
-
-@app.route("/.netlify/functions/pause_track", methods=["GET"])
-def pause_track():
-    pause_track = sp.pause_playback()
-    return "The track is paused"
-
-@app.route("/.netlify/functions/next_track", methods=["GET"])
-def next_track():
-    next_track = sp.next_track()
-    return "The track is skipped"
+        response = {
+            "statusCode": 200,
+            "body": json.dumps({"message": f"Currently playing: {track_name} - {artist_name} - {duration}"})
+        }
     
-@app.route("/.netlify/functions/previous_track", methods=["GET"])
-def previous_track():
-    previous_track = sp.previous_track()
-    return "Played previous track"
+    return response
 
-@app.route("/.netlify/functions/playback_volume", methods=["GET"])
-def playback_volume():
-    playback_volume = sp.volume(volume_percent=30)  # volume_percent value is 0-100
-    return "The volume is successfully adjusted"
-
-# You can remove the if __name__ == "__main__": block and app.run()
-
-# Keep in mind that you won't be running the Flask development server directly
-# Instead, you will deploy this code to Netlify, and it will handle the serverless functions.
-
+def time_format(track_duration):
+    seconds = track_duration // 1000
+    minutes = seconds // 60
+    remaining_seconds = seconds % 60
+    time_format = f"{minutes}:{remaining_seconds:02}"
+    return time_format

@@ -1,2 +1,8 @@
 [build]
-  functions = "functions"
+  command = "npm run build"  # or any build command for your project
+  functions = "functions"  # the directory where your serverless functions reside
+
+[[redirects]]
+  from = "/.netlify/functions/*"
+  to = "functions/:splat"
+  status = 200
