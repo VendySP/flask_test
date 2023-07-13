@@ -21,7 +21,7 @@ def time_format(track_duration):
     time_format = f"{minutes}:{remaining_seconds:02}"
     return time_format
 
-def current_track():
+def current_track(request):
     # Get the currently playing track
     current_track = sp.current_user_playing_track()
 
@@ -38,37 +38,35 @@ def current_track():
 
 @app.route("/")
 def index():
-    return current_track()
+    return current_track(request)
 
-@app.route("/resume_track", methods=["GET"])
+@app.route("/.netlify/functions/resume_track", methods=["GET"])
 def startOrResume_track():
     startOrResume_track = sp.start_playback()
     return "The track is resumed"
 
-@app.route("/pause_track", methods=["GET"])
+@app.route("/.netlify/functions/pause_track", methods=["GET"])
 def pause_track():
     pause_track = sp.pause_playback()
     return "The track is paused"
 
-@app.route("/next_track", methods=["GET"])
+@app.route("/.netlify/functions/next_track", methods=["GET"])
 def next_track():
     next_track = sp.next_track()
     return "The track is skipped"
     
-@app.route("/previous_track", methods=["GET"])
+@app.route("/.netlify/functions/previous_track", methods=["GET"])
 def previous_track():
     previous_track = sp.previous_track()
     return "Played previous track"
 
-# @app.route("/playback_volume", methods=["GET"])
-# def playback_volume(volume_value):
-#     playback_volume = sp.volume(volume_percent=volume_value)  # volume_percent value is 0-100
-#     return "The volume is successfully adjusted " + str(volume_value)
-
-@app.route("/playback_volume", methods=["GET"])
+@app.route("/.netlify/functions/playback_volume", methods=["GET"])
 def playback_volume():
     playback_volume = sp.volume(volume_percent=30)  # volume_percent value is 0-100
     return "The volume is successfully adjusted"
 
-if __name__ == "__main__":
-    app.run(debug=True)
+# You can remove the if __name__ == "__main__": block and app.run()
+
+# Keep in mind that you won't be running the Flask development server directly
+# Instead, you will deploy this code to Netlify, and it will handle the serverless functions.
+
