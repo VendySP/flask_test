@@ -1,12 +1,12 @@
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
-from flask import Flask, request, jsonify
+from flask import Flask, request
 
 app = Flask(__name__)
 
 client_id = "578feaebb8124668a3a166ad01842756"
 client_secret = "359c2b4a7fef41cf825e712028f4d8e7"
-redirect_uri = "http://127.0.0.1:5000"
+redirect_uri = "https://9518-139-255-213-74.ngrok-free.app"
 scope = "user-read-currently-playing, user-modify-playback-state"
 
 sp = spotipy.Spotify(auth_manager=SpotifyOAuth(client_id=client_id,
@@ -36,24 +36,19 @@ def current_track():
         
         return f"Currently playing: {track_name} - {artist_name} - {duration}"
 
-# @app.route("/")
-# def index():
-#     return current_track()
-
-@app.route("/get_current_track", methods=["GET"])
-def get_current_track():
-    track = current_track()  # Call your current_track() function
-    return jsonify({"track": track})
+@app.route("/")
+def index():
+    return current_track()
 
 @app.route("/resume_track", methods=["GET"])
 def startOrResume_track():
     startOrResume_track = sp.start_playback()
     return "The track is resumed"
 
-@app.route("/pause_track")
+@app.route("/pause_track", methods=["GET"])
 def pause_track():
     pause_track = sp.pause_playback()
-    return render_template("pause_track.html")
+    return "The track is paused"
 
 @app.route("/next_track", methods=["GET"])
 def next_track():
